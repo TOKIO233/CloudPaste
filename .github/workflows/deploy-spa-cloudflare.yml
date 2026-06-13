@@ -13,6 +13,10 @@ on:
         description: "是否由部署控制面板触发 / triggered from deployment control panel"
         required: false
         default: "false"
+      initialize_schema:
+        description: "是否初始化 D1 schema（会重建表，请谨慎） / initialize D1 schema"
+        required: false
+        default: "false"
   repository_dispatch:
     types: [deploy-spa-button]
 
@@ -177,6 +181,7 @@ jobs:
           echo "database_id=$DATABASE_ID" >> $GITHUB_ENV
 
       - name: Initialize D1 Database schema
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.initialize_schema == 'true'
         working-directory: ./backend
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
